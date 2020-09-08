@@ -1,23 +1,24 @@
 require('dotenv').config();
-import configurations from './configurations';
-import { WebClient, WebAPICallResult } from '@slack/web-api';
 import { Client } from 'pg';
 import queryTests, { QueryTest } from './query-tests';
 import * as _ from 'lodash';
+import slackController from './slack-controller';
 
 (async () => {
     const client = new Client();
     
+    slackController.sendMessage({
+        title: '*Starting run now*',
+    });
+
     await client.connect();
     for(let test of queryTests) {
         const queryResult = await client.query(test.query);
         const testResult = _.isEqual(test.expectedResults, queryResult.rows);
-        console.log(`${test.name}: Status: ${testResult ? 'Passed' : 'Failed'}; ${test.message(test, queryResult.rows)}`);
+        slackController.sendMessage({
+            title: test.name,
+            message: `${testResult ? 'Passed' : 'Failed'}: ${test.message(test, queryResult.rows)}`,
+            color: testResult ? '#00FF00' : '#FF0000'
+        });
     }
-    // const web = new WebClient(configurations.slack.accessToken);
-    // const result: WebAPICallResult = await web.chat.postMessage({
-    //     text: 'Hello World',
-    //     channel: 'data-integrity-monitor'
-    // });
-    // console.log(JSON.stringify(result));
 })();
