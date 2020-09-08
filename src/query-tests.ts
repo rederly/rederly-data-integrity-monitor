@@ -45,6 +45,25 @@ const queryTests: Array<QueryTest> = [
             return `There are ${result.length} emails duplicated with a total of ${totalDups - result.length} duplicates`;
         })
     },
+    {
+        name: 'Missing workbooks',
+        query: `
+        SELECT * FROM (
+            SELECT g.created_at, COUNT(b.student_grade_id) as workbook_count, g.student_grade_num_attempts, g.student_grade_id, u.user_id, g.course_topic_question_id
+            FROM student_grade g
+            LEFT JOIN student_workbook b ON
+            g.student_grade_id = b.student_grade_id
+            INNER JOIN users u ON
+            g.user_id = u.user_id
+            GROUP BY g.student_grade_id, u.user_id, u.user_email, g.course_topic_question_id, g.updated_at
+        ) subquery
+        WHERE subquery.workbook_count != student_grade_num_attempts
+        AND created_at > '2020-08-31 03:00:00.000+00'
+        `,
+        expectedResults: [],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            return `Grades that mismatch: ${JSON.stringify(result, null, 2)}`;
+        })
     }
 ]
 
