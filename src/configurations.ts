@@ -1,5 +1,6 @@
+import * as _ from 'lodash';
 export default {
     slack: {
-        accessToken: process.env.SLACK_TOKEN
+        accessToken: _.defaultTo(process.env.SLACK_TOKEN, '')
     }
 }
