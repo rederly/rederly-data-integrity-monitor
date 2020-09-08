@@ -12,7 +12,7 @@ import * as _ from 'lodash';
     for(let test of queryTests) {
         const queryResult = await client.query(test.query);
         const testResult = _.isEqual(test.expectedResults, queryResult.rows);
-        console.log(testResult);
+        console.log(`${test.name}: Status: ${testResult ? 'Passed' : 'Failed'}; ${test.message(test, queryResult.rows)}`);
     }
     // const web = new WebClient(configurations.slack.accessToken);
     // const result: WebAPICallResult = await web.chat.postMessage({

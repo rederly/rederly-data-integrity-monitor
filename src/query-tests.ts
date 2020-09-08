@@ -2,11 +2,12 @@ export interface QueryTest {
     name: string;
     query: string;
     expectedResults: Array<any>;
+    message: (test: QueryTest, result: Array<any>) => string;
 }
 
 const queryTests: Array<QueryTest> = [
     {
-        name: 'Missing Grades',
+        name: 'Missing Grades Count',
         query: `
         SELECT count(*)
         FROM student_enrollment
@@ -20,7 +21,13 @@ const queryTests: Array<QueryTest> = [
         `,
         expectedResults: [{
             count: '0'
-        }]
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
     }
 ]
 
