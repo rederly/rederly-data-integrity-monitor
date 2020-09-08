@@ -1,10 +1,12 @@
 require('dotenv').config();
 import configurations from './configurations';
+import { WebClient, WebAPICallResult } from '@slack/web-api';
+
 const sleep = (millis: number): Promise<void> => (new Promise((resolve) => setTimeout(resolve, millis)));
+const web = new WebClient(configurations.slack.accessToken);
 (async () => {
-    console.log(configurations.slack.accessToken)
-    console.log(new Date());
-    await sleep(5000);
-    console.log('HELLO WORLD');
-    console.log(new Date());
+    await web.chat.postMessage({
+        text: 'Hello World',
+        channel: 'data-integrity-monitor'
+    });    
 })();
