@@ -28,6 +28,23 @@ const queryTests: Array<QueryTest> = [
             }
             return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
         })
+    },
+    {
+        name: 'Duplicate emails',
+        query: `
+        SELECT * FROM (
+            SELECT COUNT(user_email) as duplicate_count
+            FROM users
+            GROUP BY TRIM(LOWER(user_email))
+        ) subquery
+        WHERE subquery.duplicate_count > 1
+        `,
+        expectedResults: [],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            const totalDups = result.reduce((accumulator, obj) => accumulator + parseInt(obj.duplicate_count), 0);
+            return `There are ${result.length} emails duplicated with a total of ${totalDups - result.length} duplicates`;
+        })
+    },
     }
 ]
 

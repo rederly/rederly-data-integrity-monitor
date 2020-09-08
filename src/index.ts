@@ -18,7 +18,6 @@ const FAILURE_COLOR = '#FF0000';
             let queryResult: QueryResult | null = null;
             try {
                 queryResult = await databaseController.query(test.query);
-                throw new Error('test');
             } catch (e) {
                 console.error(`Error running test ${test.name}`, e)
                 await slackController.sendMessage({
