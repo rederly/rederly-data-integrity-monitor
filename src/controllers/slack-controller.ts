@@ -1,5 +1,5 @@
 import configurations from '../configurations';
-import { WebClient, WebAPICallResult } from '@slack/web-api';
+import { WebClient } from '@slack/web-api';
 
 export interface SendMessageOptions {
     color?: string;
@@ -9,7 +9,7 @@ export interface SendMessageOptions {
 
 class SlackController {
     readonly webClient: WebClient;
-    readonly channel = 'data-integrity-monitor';
+    readonly channel = configurations.slack.channel;
     
     constructor () {
         this.webClient = new WebClient(configurations.slack.accessToken);
@@ -20,7 +20,7 @@ class SlackController {
         message,
         title
     }: SendMessageOptions) {
-        const result: WebAPICallResult = await this.webClient.chat.postMessage({
+        await this.webClient.chat.postMessage({
             text: title,
             channel: this.channel,
             attachments: [
@@ -30,7 +30,6 @@ class SlackController {
                 }
             ]
         });
-        console.log(JSON.stringify(result));
     }
 }
 
