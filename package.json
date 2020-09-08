@@ -6,6 +6,16 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "nodemonConfig": {
+    "ignore": [
+      "**/*.test.ts",
+      "**/*.spec.ts"
+    ],
+    "watch": [
+      "src"
+    ],
+    "ext": "ts"
+  },
   "author": "",
   "license": "ISC",
   "devDependencies": {
