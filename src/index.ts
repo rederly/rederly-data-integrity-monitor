@@ -1,8 +1,8 @@
 require('dotenv').config();
 import queryTests from './query-tests';
 import * as _ from 'lodash';
-import slackController from './slack-controller';
-import databaseController from './database-controller';
+import slackController from './controllers/slack-controller';
+import databaseController from './controllers/database-controller';
 
 (async () => {
     await slackController.sendMessage({

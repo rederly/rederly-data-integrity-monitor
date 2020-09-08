@@ -1,4 +1,4 @@
-import configurations from './configurations';
+import configurations from '../configurations';
 import { WebClient, WebAPICallResult } from '@slack/web-api';
 
 export interface SendMessageOptions {
