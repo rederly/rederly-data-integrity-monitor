@@ -4,7 +4,10 @@
   "description": "",
   "main": "src/index.ts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "ts-node src/index.ts",
+    "start:watch": "nodemon -x npm start",
+    "start:debug": "node --inspect=5858 -r ts-node/register ./src/index.ts",
+    "start:debug:watch": "nodemon -x npm run start:debug"
   },
   "nodemonConfig": {
     "ignore": [
