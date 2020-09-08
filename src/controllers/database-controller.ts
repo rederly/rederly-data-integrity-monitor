@@ -3,7 +3,6 @@ import { Client } from 'pg';
 class DatabaseController {
     readonly client: Client;
     readonly connectionPromise: Promise<void>;
-    private connected: boolean = false;
 
     constructor() {
         this.client = new Client();
