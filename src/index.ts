@@ -11,13 +11,9 @@ const SUCCESS_COLOR = '#00FF00';
 const FAILURE_COLOR = '#FF0000';
 
 new ScheduledEvent({
-    // Run once a day
-    frequencyInMillis: 86400000,
-    // since it's absolute it's midnight UTC
-    absolute: true,
-    // 8 hours
-    offsetInMillis: 28800000,
-    // Don't run until it's time
+    frequencyInMillis: configurations.application.runInterval,
+    absolute: configurations.application.runWithAbsoluteTime,
+    offsetInMillis: configurations.application.runWithOffset,
     runImmediately: configurations.application.runImmediately,
     callback: async () => {
         try {
