@@ -20,7 +20,7 @@ class SlackController {
         message,
         title
     }: SendMessageOptions) {
-        await this.webClient.chat.postMessage({
+        const slackObject = {
             text: title,
             channel: this.channel,
             attachments: [
@@ -29,7 +29,12 @@ class SlackController {
                     color
                 }
             ]
-        });
+        };
+        if (configurations.slack.on) {
+            await this.webClient.chat.postMessage(slackObject);
+        } else {
+            console.log(`${JSON.stringify(slackObject, null, 2)}`);
+        }
     }
 }
 

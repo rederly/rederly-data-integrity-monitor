@@ -5,6 +5,7 @@ import slackController from './controllers/slack-controller';
 import databaseController from './controllers/database-controller';
 import { QueryResult } from 'pg';
 import ScheduledEvent from './utilities/scheduled-event';
+import configurations from './configurations';
 
 const SUCCESS_COLOR = '#00FF00';
 const FAILURE_COLOR = '#FF0000';
@@ -17,11 +18,11 @@ new ScheduledEvent({
     // 8 hours
     offsetInMillis: 28800000,
     // Don't run until it's time
-    runImmediately: false,
+    runImmediately: configurations.application.runImmediately,
     callback: async () => {
         try {
             await slackController.sendMessage({
-                title: '*@@@@@@@@@@@@@@@@@@@@@@@@@ Starting run now @@@@@@@@@@@@@@@@@@@@@@@@@*',
+                title: '*$$$$$$$$$$$$$$$$$$$$$$$$$ Starting run now $$$$$$$$$$$$$$$$$$$$$$$$$*',
             });
         
             for(let test of queryTests) {
