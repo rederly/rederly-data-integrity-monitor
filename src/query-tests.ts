@@ -94,7 +94,41 @@ const queryTests: Array<QueryTest> = [
             }
             return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
         })
-    }
+    },
+    {
+        name: 'How many rows have rendered html',
+        query: `
+        SELECT COUNT(*)
+        FROM student_workbook
+        WHERE student_workbook_submitted -> 'renderedHTML' IS NOT NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'How many workbooks have non object data (string, null)',
+        query: `
+        SELECT count(*)
+        FROM student_workbook
+        WHERE jsonb_typeof(student_workbook_submitted) != 'object';
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
 ]
 
 export default queryTests;
