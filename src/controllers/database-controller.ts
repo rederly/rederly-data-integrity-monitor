@@ -1,6 +1,6 @@
 import { Client } from 'pg';
 
-class DatabaseController {
+export default class DatabaseController {
     readonly client: Client;
     readonly connectionPromise: Promise<void>;
 
@@ -8,11 +8,18 @@ class DatabaseController {
         this.client = new Client();
         this.connectionPromise = this.client.connect();
     }
+    
 
     async query(queryString: string) {
         await this.connectionPromise;
         return this.client.query(queryString);
     }
+
+    close() {
+        return this.client.end();
+    }
+
+    async awaitConnection() {
+        await this.connectionPromise;
+    }
 }
-const databaseController = new DatabaseController();
-export default databaseController;

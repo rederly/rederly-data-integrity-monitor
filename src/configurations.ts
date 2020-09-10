@@ -26,6 +26,8 @@ export default {
         on: _.defaultTo(envToBoolean(process.env.SLACK_ON), true),
     },
     application: {
+        // Run once or use the rest of the scheduler options
+        runOnScheduler: _.defaultTo(envToBoolean(process.env.RUN_ON_SCHEDULER), false),
         // We want to run this late at night so if the server reboots we don't want to run it in the middle of the day
         runImmediately: _.defaultTo(envToBoolean(process.env.RUN_IMMEDIATELY), false),
         // How often we run, defaults to once a day
