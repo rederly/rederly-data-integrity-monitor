@@ -35,11 +35,14 @@ const run = async () => {
                 continue;
             }
             const testResult = _.isEqual(test.expectedResults, queryResult.rows);
-            await slackController.sendMessage({
-                title: test.name,
-                message: `${testResult ? 'Passed' : 'Failed'}: ${test.message(test, queryResult.rows)}`,
-                color: testResult ? SUCCESS_COLOR : FAILURE_COLOR
-            });
+            // if we output passes or if the test failed output
+            if (configurations.application.outputPasses || !testResult) {
+                await slackController.sendMessage({
+                    title: test.name,
+                    message: `${testResult ? 'Passed' : 'Failed'}: ${test.message(test, queryResult.rows)}`,
+                    color: testResult ? SUCCESS_COLOR : FAILURE_COLOR
+                });    
+            }
         }
         await slackController.sendMessage({
             title: '*######################### Ending run now #########################*',
