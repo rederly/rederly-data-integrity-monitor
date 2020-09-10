@@ -24,6 +24,7 @@ export default {
         accessToken: _.defaultTo(process.env.SLACK_TOKEN, ''),
         channel: _.defaultTo(process.env.SLACK_CHANNEL, 'data-integrity-monitor'),
         on: _.defaultTo(envToBoolean(process.env.SLACK_ON), true),
+        log: _.defaultTo(envToBoolean(process.env.SLACK_LOG), true),
     },
     application: {
         // Run once or use the rest of the scheduler options

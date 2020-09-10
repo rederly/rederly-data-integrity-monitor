@@ -1,5 +1,6 @@
 import configurations from '../configurations';
 import { WebClient } from '@slack/web-api';
+import logger from '../utilities/logger';
 
 export interface SendMessageOptions {
     color?: string;
@@ -32,8 +33,12 @@ class SlackController {
         };
         if (configurations.slack.on) {
             await this.webClient.chat.postMessage(slackObject);
-        } else {
-            console.log(`${JSON.stringify(slackObject, null, 2)}`);
+        }
+
+        if (configurations.slack.log) {
+            logger.info('');
+            logger.info(`# ${title}`);
+            logger.info(`${message}\n`);    
         }
     }
 }
