@@ -129,6 +129,23 @@ const queryTests: Array<QueryTest> = [
             return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
         })
     },
+    {
+        name: 'How many rows are missing form_data',
+        query: `
+        SELECT COUNT(*)
+        FROM student_workbook
+        WHERE student_workbook_submitted -> 'form_data' IS NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
 ]
 
 export default queryTests;
