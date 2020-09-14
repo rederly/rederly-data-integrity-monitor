@@ -203,6 +203,30 @@ const queryTests: Array<QueryTest> = [
             return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
         })
     },
+    {
+        name: 'Problems with incorrect prefix',
+        query: `
+        SELECT COUNT(*)
+        FROM course_topic_question
+        WHERE
+        course_topic_question_webwork_question_ww_path NOT LIKE 'Library%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'Contrib%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'webwork-open-problem-library%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/our%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/templates%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/rederly%' AND
+        course_topic_question.course_topic_question_active = true;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
 ]
 
 export default queryTests;
