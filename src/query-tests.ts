@@ -7,6 +7,63 @@ export interface QueryTest {
 
 const queryTests: Array<QueryTest> = [
     {
+        name: 'Total user count',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM users;
+        `,
+        // TODO don't validate this
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Student count',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM users
+        WHERE role_id = 0;
+        `,
+        // TODO don't validate this
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Professor count',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM users
+        WHERE role_id = 1
+        AND user_email NOT ILIKE '%rederly.com';
+        `,
+        // TODO don't validate this
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
         name: 'Missing Grades Count',
         query: `
         SELECT count(*)
