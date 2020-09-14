@@ -1,7 +1,7 @@
 export interface QueryTest {
     name: string;
     query: string;
-    expectedResults: Array<any>;
+    expectedResults: Array<any> | null;
     message: (test: QueryTest, result: Array<any>) => string;
 }
 
@@ -13,15 +13,12 @@ const queryTests: Array<QueryTest> = [
         COUNT(*)
         FROM users;
         `,
-        // TODO don't validate this
-        expectedResults: [{
-            count: '0'
-        }],
-        message: ((test: QueryTest, result: Array<any>): string => {
+        expectedResults: null,
+        message: ((_test: QueryTest, result: Array<any>): string => {
             if(result.length !== 1) {
-                return `Expected 1 row but got ${result.length}`;
+                return `ERROR: Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Received ${result[0].count}`;
         })
     },
     {
@@ -32,15 +29,12 @@ const queryTests: Array<QueryTest> = [
         FROM users
         WHERE role_id = 0;
         `,
-        // TODO don't validate this
-        expectedResults: [{
-            count: '0'
-        }],
-        message: ((test: QueryTest, result: Array<any>): string => {
+        expectedResults: null,
+        message: ((_test: QueryTest, result: Array<any>): string => {
             if(result.length !== 1) {
-                return `Expected 1 row but got ${result.length}`;
+                return `ERROR: Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Received ${result[0].count}`;
         })
     },
     {
@@ -52,15 +46,12 @@ const queryTests: Array<QueryTest> = [
         WHERE role_id = 1
         AND user_email NOT ILIKE '%rederly.com';
         `,
-        // TODO don't validate this
-        expectedResults: [{
-            count: '0'
-        }],
-        message: ((test: QueryTest, result: Array<any>): string => {
+        expectedResults: null,
+        message: ((_test: QueryTest, result: Array<any>): string => {
             if(result.length !== 1) {
-                return `Expected 1 row but got ${result.length}`;
+                return `ERROR: Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Received ${result[0].count}`;
         })
     },
     {
@@ -83,7 +74,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -124,7 +115,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -149,7 +140,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -166,7 +157,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -183,7 +174,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -200,7 +191,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
     {
@@ -224,7 +215,7 @@ const queryTests: Array<QueryTest> = [
             if(result.length !== 1) {
                 return `Expected 1 row but got ${result.length}`;
             }
-            return `Expected ${test.expectedResults[0].count} and received ${result[0].count}`;
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
         })
     },
 ]

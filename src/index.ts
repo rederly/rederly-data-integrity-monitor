@@ -34,7 +34,7 @@ const run = async () => {
             if(_.isNil(queryResult)) {
                 continue;
             }
-            const testResult = _.isEqual(test.expectedResults, queryResult.rows);
+            const testResult = _.isNull(test.expectedResults) || _.isEqual(test.expectedResults, queryResult.rows);
             // if we output passes or if the test failed output
             if (configurations.application.outputPasses || !testResult) {
                 await slackController.sendMessage({
