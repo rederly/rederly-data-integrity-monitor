@@ -36,7 +36,7 @@ const run = async () => {
             }
             const testResult = _.isNull(test.expectedResults) || _.isEqual(test.expectedResults, queryResult.rows);
             // if we output passes or if the test failed output
-            if (configurations.application.outputPasses || !testResult) {
+            if (_.isNull(test.expectedResults) || configurations.application.outputPasses || !testResult) {
                 await slackController.sendMessage({
                     title: test.name,
                     message: `${testResult ? 'Passed' : 'Failed'}: ${test.message(test, queryResult.rows)}`,
