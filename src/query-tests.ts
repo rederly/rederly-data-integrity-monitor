@@ -55,6 +55,24 @@ const queryTests: Array<QueryTest> = [
         })
     },
     {
+        name: 'Paid professor count',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM users
+        WHERE role_id = 1
+        AND user_paid_until > NOW()
+        AND user_email NOT ILIKE '%rederly.com';
+        `,
+        expectedResults: null,
+        message: ((_test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `ERROR: Expected 1 row but got ${result.length}`;
+            }
+            return `Received ${result[0].count}`;
+        })
+    },
+    {
         name: 'Missing Grades Count',
         query: `
         SELECT count(*)
@@ -125,13 +143,13 @@ const queryTests: Array<QueryTest> = [
             SELECT g.created_at, COUNT(b.student_grade_id) as workbook_count, g.student_grade_num_attempts, g.student_grade_id, u.user_id, g.course_topic_question_id
             FROM student_grade g
             LEFT JOIN student_workbook b ON
-            g.student_grade_id = b.student_grade_id
+            g.student_grade_id = b.student_grade_id AND b.student_workbook_random_seed = g.student_grade_original_random_seed
             INNER JOIN users u ON
             g.user_id = u.user_id
             GROUP BY g.student_grade_id, u.user_id, u.user_email, g.course_topic_question_id, g.updated_at
         ) subquery
         WHERE subquery.workbook_count > student_grade_num_attempts
-        AND created_at > '2020-08-31 03:00:00.000+00'
+        AND created_at > '2021-02-08 03:00:00.000+00'
         `,
         expectedResults: [{
             count: '0'
@@ -200,13 +218,122 @@ const queryTests: Array<QueryTest> = [
         SELECT COUNT(*)
         FROM course_topic_question
         WHERE
-        course_topic_question_webwork_question_ww_path NOT LIKE 'Library%' AND
-        course_topic_question_webwork_question_ww_path NOT LIKE 'Contrib%' AND
-        course_topic_question_webwork_question_ww_path NOT LIKE 'webwork-open-problem-library%' AND
-        course_topic_question_webwork_question_ww_path NOT LIKE 'private/our%' AND
-        course_topic_question_webwork_question_ww_path NOT LIKE 'private/templates%' AND
-        course_topic_question_webwork_question_ww_path NOT LIKE 'private/rederly%' AND
-        course_topic_question.course_topic_question_active = true;
+        course_topic_question_webwork_question_ww_path NOT LIKE 'Library/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'Contrib/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'webwork-open-problem-library/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/our/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/my/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/templates/%' AND
+        course_topic_question_webwork_question_ww_path NOT LIKE 'private/rederly/%' AND
+        course_topic_question.course_topic_question_active = true AND
+        course_topic_question_errors IS NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Exam problems with incorrect prefix',
+        query: `
+        SELECT COUNT(*) FROM
+        (
+            SELECT
+            course_question_assessment_info_id,
+            UNNEST(course_question_assessment_info_additional_problem_paths) as course_question_assessment_info_additional_problem_paths,
+            course_question_assessment_info_errors,
+            course_question_assessment_info_active
+            FROM course_question_assessment_info
+        ) ss
+        WHERE
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'Library/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'Contrib/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'webwork-open-problem-library/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'private/our/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'private/templates/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'private/rederly/%' AND
+        course_question_assessment_info_additional_problem_paths NOT LIKE 'private/my/%' AND
+        course_question_assessment_info_active = true AND
+        course_question_assessment_info_errors IS NOT NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Missing last influencing (based on num attempts)',
+        query: `
+        SELECT COUNT(*)
+        FROM student_grade
+        WHERE last_influencing_attempt_workbook_id IS NULL AND
+        student_grade_num_attempts > 0
+        AND created_at > '2020-11-15 22:24:07.4-05';
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Missing last influencing attempt (based on num attempts)',
+        query: `
+        SELECT COUNT(*)
+        FROM student_grade
+        WHERE last_influencing_attempt_workbook_id IS NULL AND
+        student_grade_num_attempts > 0
+        AND created_at > '2020-11-15 22:24:07.4-05';
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Missing last influencing attempt (based on last influencing legal attempt)',
+        query: `
+        SELECT COUNT(*)
+        FROM student_grade
+        WHERE last_influencing_attempt_workbook_id IS NULL AND
+        last_influencing_legal_attempt_workbook_id IS NOT NULL
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `Expected 1 row but got ${result.length}`;
+            }
+            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Missing last influencing attempt (based on last influencing credited attempt)',
+        query: `
+        SELECT COUNT(*)
+        FROM student_grade
+        WHERE last_influencing_attempt_workbook_id IS NULL AND
+        last_influencing_credited_attempt_workbook_id IS NOT NULL
         `,
         expectedResults: [{
             count: '0'
