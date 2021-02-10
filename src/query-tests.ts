@@ -272,25 +272,6 @@ const queryTests: Array<QueryTest> = [
         })
     },
     {
-        name: 'Missing last influencing (based on num attempts)',
-        query: `
-        SELECT COUNT(*)
-        FROM student_grade
-        WHERE last_influencing_attempt_workbook_id IS NULL AND
-        student_grade_num_attempts > 0
-        AND created_at > '2020-11-15 22:24:07.4-05';
-        `,
-        expectedResults: [{
-            count: '0'
-        }],
-        message: ((test: QueryTest, result: Array<any>): string => {
-            if(result.length !== 1) {
-                return `Expected 1 row but got ${result.length}`;
-            }
-            return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
-        })
-    },
-    {
         name: 'Missing last influencing attempt (based on num attempts)',
         query: `
         SELECT COUNT(*)
