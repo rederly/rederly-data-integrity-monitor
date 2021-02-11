@@ -6,6 +6,7 @@ import DatabaseController from './controllers/database-controller';
 import { QueryResult } from 'pg';
 import ScheduledEvent from './utilities/scheduled-event';
 import configurations from './configurations';
+import logger from './utilities/logger';
 
 const SUCCESS_COLOR = '#00FF00';
 const FAILURE_COLOR = '#FF0000';
@@ -36,7 +37,7 @@ const run = async () => {
             }
             const testResult = _.isNull(test.expectedResults) || _.isEqual(test.expectedResults, queryResult.rows);
             // if we output passes or if the test failed output
-            if (configurations.application.outputPasses || !testResult) {
+            if (_.isNull(test.expectedResults) || configurations.application.outputPasses || !testResult) {
                 await slackController.sendMessage({
                     title: test.name,
                     message: `${testResult ? 'Passed' : 'Failed'}: ${test.message(test, queryResult.rows)}`,
@@ -84,3 +85,13 @@ const run = async () => {
         });
     }
 })();
+
+process.on('exit', async () => {
+    try {
+        await slackController.sendMessage({
+            title: '*$$$$$$$$$$$$$$$$$$$$$$$$$ Exiting the application $$$$$$$$$$$$$$$$$$$$$$$$$*',
+        });    
+    } catch (e) {
+        logger.error('Error with shutdown event', e);
+    }
+});
