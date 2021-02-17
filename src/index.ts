@@ -7,6 +7,7 @@ import { QueryResult } from 'pg';
 import ScheduledEvent from './utilities/scheduled-event';
 import configurations from './configurations';
 import logger from './utilities/logger';
+import * as express from 'express';
 
 const SUCCESS_COLOR = '#00FF00';
 const FAILURE_COLOR = '#FF0000';
@@ -85,7 +86,24 @@ const run = async () => {
         });
     }
 })();
-
+if (configurations.server.enabled) {
+    const { port } = configurations.server;
+    const app = express();
+    app.all('/data-integrity-monitor/run', (_req, res) => {
+        run()
+        .then(() => res.status(200).send('ok'))
+        .catch((e) => {
+            logger.error('Server request to run failed', e);
+            res.status(500).send(e.message);
+        });
+    });
+    app.listen(port, () => {
+        slackController.sendMessage({
+            title: `Server listening on port: ${port}`,
+        })
+        .catch(logger.error);
+    });
+}
 process.on('exit', async () => {
     try {
         await slackController.sendMessage({
