@@ -38,5 +38,9 @@ export default {
         // Only works with `runWithAbsoluteTime`, applies some constant to the time, we want to run at 8am utc
         runWithOffset: _.defaultTo(envToNumber(process.env.RUN_OFFSET), 28800000),
         outputPasses: _.defaultTo(envToBoolean(process.env.OUTPUT_PASSES), true),
+    },
+    server: {
+        enabled: _.defaultTo(envToBoolean(process.env.SERVER_ENABLED), false),
+        port: _.defaultTo(envToNumber(process.env.SERVER_PORT), 3006)
     }
 }
