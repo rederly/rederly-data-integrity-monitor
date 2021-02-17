@@ -2,3 +2,5 @@ node_modules
 .env
 ts-built
 logs
+build
+package-outputs
