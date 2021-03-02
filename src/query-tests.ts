@@ -73,6 +73,22 @@ const queryTests: Array<QueryTest> = [
         })
     },
     {
+        name: 'Upcoming Exams',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM course_topic_content
+        WHERE course_topic_content_end_date > NOW() AND course_topic_content_end_date < NOW() + '1 week'::interval AND topic_type_id = 2;
+        `,
+        expectedResults: null,
+        message: ((_test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `ERROR: Expected 1 row but got ${result.length}`;
+            }
+            return `Received ${result[0].count}`;
+        })
+    },
+    {
         name: 'Missing Grades Count',
         query: `
         SELECT count(*)
@@ -324,6 +340,39 @@ const queryTests: Array<QueryTest> = [
                 return `Expected 1 row but got ${result.length}`;
             }
             return `Expected ${test.expectedResults?.[0].count} and received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Stuck exports',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM course_topic_content
+        WHERE course_topic_content_last_exported IS NOT NULL AND course_topic_content_export_url IS NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((_test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `ERROR: Expected 1 row but got ${result.length}`;
+            }
+            return `Received ${result[0].count}`;
+        })
+    },
+    {
+        name: 'Duplicate attachments',
+        query: `
+        SELECT COUNT(problem_attachment_cloud_filename) - COUNT(DISTINCT problem_attachment_cloud_filename) AS count FROM problem_attachment;
+        `,
+        expectedResults: [{
+            count: '96'
+        }],
+        message: ((_test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `ERROR: Expected 1 row but got ${result.length}`;
+            }
+            return `Received ${result[0].count}`;
         })
     },
 ]
