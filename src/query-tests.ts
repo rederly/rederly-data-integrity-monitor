@@ -93,12 +93,12 @@ const queryTests: Array<QueryTest> = [
         query: `
         SELECT count(*)
         FROM student_enrollment
-        INNER JOIN course ON course.course_id = student_enrollment.course_id
-        INNER JOIN course_unit_content ON course_unit_content.course_id = course.course_id
-        INNER JOIN course_topic_content ON course_topic_content.course_unit_content_id = course_unit_content.course_unit_content_id
-        INNER JOIN course_topic_question ON course_topic_question.course_topic_content_id = course_topic_content.course_topic_content_id
-        LEFT JOIN student_grade ON student_grade.course_topic_question_id = course_topic_question.course_topic_question_id AND student_grade.user_id = student_enrollment.user_id
-        WHERE student_grade.student_grade_id IS NULL
+        INNER JOIN course ON course.course_id = student_enrollment.course_id AND course.course_active
+        INNER JOIN course_unit_content ON course_unit_content.course_id = course.course_id AND course_unit_content.course_unit_content_active
+        INNER JOIN course_topic_content ON course_topic_content.course_unit_content_id = course_unit_content.course_unit_content_id AND course_topic_content.course_topic_content_active
+        INNER JOIN course_topic_question ON course_topic_question.course_topic_content_id = course_topic_content.course_topic_content_id AND course_topic_question.course_topic_question_active
+        LEFT JOIN student_grade ON student_grade.course_topic_question_id = course_topic_question.course_topic_question_id AND student_grade.user_id = student_enrollment.user_id AND student_grade.student_grade_active
+        WHERE student_grade.student_grade_id IS NULL AND student_enrollment.student_enrollment_drop_date IS NOT NULL
         ;
         `,
         expectedResults: [{
