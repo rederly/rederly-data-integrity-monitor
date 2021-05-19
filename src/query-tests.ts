@@ -361,6 +361,24 @@ const queryTests: Array<QueryTest> = [
         })
     },
     {
+        name: 'Stuck retros',
+        query: `
+        SELECT
+        COUNT(*)
+        FROM course_topic_content
+        WHERE course_topic_content_retro_started_time IS NOT NULL;
+        `,
+        expectedResults: [{
+            count: '0'
+        }],
+        message: ((_test: QueryTest, result: Array<any>): string => {
+            if(result.length !== 1) {
+                return `ERROR: Expected 1 row but got ${result.length}`;
+            }
+            return `Received ${result[0].count}`;
+        })
+    },
+    {
         name: 'Duplicate attachments',
         query: `
         SELECT COUNT(problem_attachment_cloud_filename) - COUNT(DISTINCT problem_attachment_cloud_filename) AS count FROM problem_attachment;
